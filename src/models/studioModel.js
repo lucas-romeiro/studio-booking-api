@@ -20,7 +20,7 @@ const studioSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Um estúdio deve possuir uma localização'],
       trim: true,
-      maxlength: [30, 'A localização do estúdio deve conter até 30 caracteres'],
+      maxlength: [50, 'A localização do estúdio deve conter até 50 caracteres'],
       minlength: [
         10,
         'A localização do estúdio deve conter pelo menos 10 caracteres',
