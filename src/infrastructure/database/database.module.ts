@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppConfigModule, TypedConfigService } from '../config';
-import { UserOrmEntity } from './typeorm/entities';
+import { RefreshTokenOrmEntity, UserOrmEntity } from './typeorm';
 
 @Module({
   imports: [
@@ -10,7 +10,7 @@ import { UserOrmEntity } from './typeorm/entities';
       inject: [TypedConfigService],
       useFactory: async (configService: TypedConfigService) => ({
         ...(await configService.get('database')),
-        entities: [UserOrmEntity],
+        entities: [UserOrmEntity, RefreshTokenOrmEntity],
       }),
     }),
   ],

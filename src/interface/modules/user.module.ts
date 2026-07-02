@@ -1,6 +1,8 @@
 import { CreateUserUseCase } from '@/application/user';
-import { UserOrmEntity } from '@/infrastructure/database/typeorm/entities';
-import { userRepositoryProvider } from '@/infrastructure/database/typeorm/repositories';
+import {
+  UserOrmEntity,
+  userRepositoryProvider,
+} from '@/infrastructure/database/typeorm';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersController } from '../http/controllers/user.controller';
