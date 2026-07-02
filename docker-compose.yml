@@ -44,6 +44,17 @@ services:
     networks:
       - studio-booking-api-network
 
+  redis:
+    image: redis
+    ports:
+      - '${REDIS_PORT}:6379'
+    volumes:
+      - redis-data:/data
+    command: ['redis-server', '--appendonly', 'yes']
+    restart: unless-stopped
+    networks:
+      - studio-booking-api-network
+
 networks:
   studio-booking-api-network:
     driver: bridge
