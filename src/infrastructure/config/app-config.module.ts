@@ -1,6 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { appConfig, databaseConfig } from './definitions';
+import {
+  appConfig,
+  authConfig,
+  databaseConfig,
+  redisConfig,
+} from './definitions';
 import { envSchema } from './env.schema';
 import { typedConfigProvider } from './typed-config.provider';
 import { TypedConfigService } from './typed-config.service';
@@ -9,7 +14,7 @@ import { TypedConfigService } from './typed-config.service';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig],
+      load: [appConfig, databaseConfig, authConfig, redisConfig],
       validationSchema: envSchema,
       validationOptions: {
         abortEarly: false,
