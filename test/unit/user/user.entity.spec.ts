@@ -1,4 +1,4 @@
-import { DomainError } from '@/domain/shared/errors';
+import { DomainError } from '@/domain/shared';
 import { Email, User, UserRole } from '@/domain/user';
 
 describe('User entity', () => {

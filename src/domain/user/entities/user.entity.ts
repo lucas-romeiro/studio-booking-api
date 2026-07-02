@@ -1,5 +1,4 @@
-import { BaseEntity } from '../../shared/entities';
-import { DomainError } from '../../shared/errors';
+import { BaseEntity, DomainError } from '../../shared';
 import { Email } from '../value-objects/email.vo';
 import { UserRole } from '../value-objects/user-role.vo';
 

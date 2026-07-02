@@ -1,5 +1,5 @@
-import { DomainError } from '../../../src/domain/shared/errors';
-import { Email } from '../../../src/domain/user';
+import { DomainError } from '@/domain/shared';
+import { Email } from '@/domain/user';
 
 describe('Email value object', () => {
   it('should create a valid email in lowercase', () => {
