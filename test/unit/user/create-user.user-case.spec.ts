@@ -1,56 +1,70 @@
 import { CreateUserDto, CreateUserUseCase } from '@/application/user';
 import { UserAlreadyExistsError, UserRole } from '@/domain/user';
 import { InMemoryUserRepository } from '../../__spies__';
+import { UserFactory } from '../../__factories__';
+import * as bcrypt from 'bcrypt';
 
-const dto: CreateUserDto = {
-  name: 'Jhon Doe',
-  email: 'john_doe@email.com',
-  password: 'Password1!',
-};
+jest.mock('bcrypt');
+const mockedBcrypt = jest.mocked(bcrypt);
 
 describe('CreateUserUseCase', () => {
   let useCase: CreateUserUseCase;
   let repo: InMemoryUserRepository;
+  let defaultDto: CreateUserDto;
 
   beforeEach(() => {
+    jest.clearAllMocks();
     repo = new InMemoryUserRepository();
     useCase = new CreateUserUseCase(repo);
+
+    defaultDto = {
+      name: 'John Doe',
+      email: 'john_doe@email.com',
+      password: 'Password1!',
+      role: UserRole.MUSICIAN,
+    };
+
+    mockedBcrypt.hash.mockImplementation(() => 'hashed_password');
   });
 
-  it('should create a user with default musician role', async () => {
-    const result = await useCase.execute(dto);
+  describe('Success Flow', () => {
+    it('should create a user with correctly assigned properties', async () => {
+      const result = await useCase.execute(defaultDto);
 
-    expect(result.role).toBe(UserRole.MUSICIAN);
-    expect(result.email).toBe(dto.email);
-    expect(result.id).toBeDefined();
+      expect(result.id).toBeDefined();
+      expect(result.email).toBe(defaultDto.email);
+      expect(result.role).toBe(UserRole.MUSICIAN);
+      expect(mockedBcrypt.hash).toHaveBeenCalledWith(defaultDto.password, 10);
+    });
+
+    it('should successfully persist the user in the repository data store', async () => {
+      await useCase.execute(defaultDto);
+
+      const saved = await repo.findByEmail(defaultDto.email);
+      expect(saved).not.toBeNull();
+      expect(saved?.name).toBe(defaultDto.name);
+      expect(saved?.passwordHash).toBe('hashed_password');
+    });
+
+    it('should allow creating multiple users if emails are different', async () => {
+      await useCase.execute(defaultDto);
+      await useCase.execute({ ...defaultDto, email: 'other_user@email.com' });
+
+      expect(repo.users).toHaveLength(2);
+    });
   });
 
-  it('should persist the user in the repository', async () => {
-    await useCase.execute(dto);
+  describe('Failure Flow', () => {
+    it('should throw UserAlreadyExistsError if email is already in use', async () => {
+      const existingUser = UserFactory.make({ email: defaultDto.email });
+      repo.users.push(existingUser);
 
-    const saved = await repo.findByEmail(dto.email);
-    expect(saved).not.toBeNull();
-    expect(saved?.name).toBe(dto.name);
-  });
+      await expect(useCase.execute(defaultDto)).rejects.toThrow(
+        UserAlreadyExistsError,
+      );
 
-  it('should not store the password in plain text', async () => {
-    await useCase.execute(dto);
-
-    const saved = await repo.findByEmail(dto.email);
-    expect(saved?.passwordHash).not.toBe(dto.password);
-  });
-
-  it('should throw an error if email is duplicated', async () => {
-    await useCase.execute(dto);
-
-    await expect(useCase.execute(dto)).rejects.toThrow(UserAlreadyExistsError);
-    expect(repo.users).toHaveLength(1);
-  });
-
-  it('should create multiple users with different emails', async () => {
-    await useCase.execute(dto);
-    await useCase.execute({ ...dto, email: 'outro@email.com' });
-
-    expect(repo.users).toHaveLength(2);
+      expect(mockedBcrypt.hash).not.toHaveBeenCalled();
+      expect(repo.users).toHaveLength(1);
+    });
   });
 });
