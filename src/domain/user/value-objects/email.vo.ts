@@ -4,10 +4,13 @@ export class Email {
   private readonly value: string;
 
   constructor(email: string) {
-    if (!Email.isValid(email)) {
+    const sanitizedEmail = email.trim().toLocaleLowerCase();
+
+    if (!Email.isValid(sanitizedEmail)) {
       throw new DomainError(`Invalid Email address: ${email}`);
     }
-    this.value = email.toLocaleLowerCase().trim();
+
+    this.value = sanitizedEmail;
   }
 
   private static isValid(email: string): boolean {
