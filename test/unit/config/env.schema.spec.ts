@@ -1,87 +1,85 @@
 import { envSchema } from '@/infrastructure/config/env.schema';
 
-type EnvVars = {
+interface ValidatedEnv {
   NODE_ENV: 'development' | 'production' | 'test';
   PORT: number;
+  DB_TYPE: string;
   DB_HOST: string;
   DB_PORT: number;
   DB_USER: string;
   DB_PASSWORD: string;
   DB_DATABASE: string;
-};
+  JWT_SECRET?: string;
+  JWT_EXPIRES_IN: string;
+  REFRESH_TOKEN_EXPIRES_IN_DAYS: number;
+  REDIS_HOST: string;
+  REDIS_PORT: number;
+}
 
-const validEnv: EnvVars = {
-  NODE_ENV: 'development',
-  PORT: 3000,
-  DB_HOST: 'localhost',
-  DB_PORT: 5432,
-  DB_USER: 'user',
-  DB_PASSWORD: 'pass',
-  DB_DATABASE: 'db',
-};
-
-describe('envSchema', () => {
-  it('should validate a complete and valid environment', () => {
-    const { error } = envSchema.validate(validEnv, { abortEarly: false });
-    expect(error).toBeUndefined();
+describe('envSchema Validation', () => {
+  const createValidRawEnv = (): Record<string, string> => ({
+    NODE_ENV: 'production',
+    PORT: '3000',
+    DB_USER: 'root',
+    DB_PASSWORD: 'secret_password',
+    DB_DATABASE: 'my_app_db',
+    JWT_SECRET: 'super_secret_key',
   });
 
-  it('should fail if NODE_ENV has an invalid value', () => {
-    const env = { ...validEnv, NODE_ENV: 'staging' };
+  describe('Success Flow', () => {
+    it('should validate a correct env object and apply all defaults and type coercions', () => {
+      const rawEnv = createValidRawEnv();
 
-    const { error } = envSchema.validate(env, { abortEarly: false });
+      const { error, value } = envSchema.validate(rawEnv) as {
+        error: undefined;
+        value: ValidatedEnv;
+      };
 
-    expect(error?.details[0]?.path).toContain('NODE_ENV');
+      expect(error).toBeUndefined();
+
+      expect(value.PORT).toBe(3000);
+      expect(value.DB_PORT).toBe(5432);
+
+      expect(value).toEqual(
+        expect.objectContaining({
+          NODE_ENV: 'production',
+          DB_TYPE: 'postgres',
+          DB_HOST: 'localhost',
+          JWT_EXPIRES_IN: '15m',
+          REFRESH_TOKEN_EXPIRES_IN_DAYS: 30,
+          REDIS_HOST: 'localhost',
+          REDIS_PORT: 6379,
+        }),
+      );
+    });
   });
 
-  it('should apply default value for PORT when missing', () => {
-    const { PORT: _, ...rest } = validEnv;
+  describe('Failure Flow', () => {
+    it('should fail if NODE_ENV has an invalid option', () => {
+      const env = { ...createValidRawEnv(), NODE_ENV: 'staging' };
 
-    const { value } = envSchema.validate(rest, { abortEarly: false }) as {
-      value: { PORT: number };
-    };
+      const { error } = envSchema.validate(env);
 
-    expect(value.PORT).toBe(3000);
-  });
+      const hasNodeEnvError = error?.details.some((detail) =>
+        detail.path.includes('NODE_ENV'),
+      );
+      expect(hasNodeEnvError).toBe(true);
+    });
 
-  it('should apply default value for DB_HOST when missing', () => {
-    const { DB_HOST: _, ...rest } = validEnv;
+    it.each([['DB_USER'], ['DB_PASSWORD'], ['DB_DATABASE']])(
+      'should fail if required field %s is missing',
+      (field) => {
+        const env: Partial<Record<string, string>> = createValidRawEnv();
 
-    const { value } = envSchema.validate(rest, { abortEarly: false }) as {
-      value: { DB_HOST: string };
-    };
+        delete env[field];
 
-    expect(value.DB_HOST).toBe('localhost');
-  });
+        const { error } = envSchema.validate(env, { abortEarly: false });
 
-  it('should apply default value for DB_PORT when missing', () => {
-    const { DB_PORT: _, ...rest } = validEnv;
-
-    const { value } = envSchema.validate(rest, { abortEarly: false }) as {
-      value: { DB_PORT: number };
-    };
-
-    expect(value.DB_PORT).toBe(5432);
-  });
-
-  it('should fail if DB_USER is missing', () => {
-    const { DB_USER: _, ...rest } = validEnv;
-
-    const { error } = envSchema.validate(rest, { abortEarly: false });
-    expect(error?.details[0]?.path).toContain('DB_USER');
-  });
-
-  it('should fail if DB_PASSWORD is missing', () => {
-    const { DB_PASSWORD: _, ...rest } = validEnv;
-
-    const { error } = envSchema.validate(rest, { abortEarly: false });
-    expect(error?.details[0]?.path).toContain('DB_PASSWORD');
-  });
-
-  it('should fail if DB_DATABASE is missing', () => {
-    const { DB_DATABASE: _, ...rest } = validEnv;
-
-    const { error } = envSchema.validate(rest, { abortEarly: false });
-    expect(error?.details[0]?.path).toContain('DB_DATABASE');
+        const hasFieldError = error?.details.some((detail) =>
+          detail.path.includes(field),
+        );
+        expect(hasFieldError).toBe(true);
+      },
+    );
   });
 });
