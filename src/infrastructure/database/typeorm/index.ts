@@ -4,3 +4,6 @@ export { RefreshTokenTypeOrmRepository } from './repositories/refresh-token.type
 export { UserTypeOrmRepository } from './repositories/user.typeorm-repository';
 export { refreshTokenRepositoryProvider } from './repositories/providers/refresh-token-repository.provider';
 export { userRepositoryProvider } from './repositories/providers/user-repository.provider';
+export { RoomOrmEntity } from './entities/room.orm-entity';
+export { RoomTypeOrmRepository } from './repositories/room.typeorm-repository';
+export { roomRepositoryProvider } from './repositories/providers/room-repository.provider';
