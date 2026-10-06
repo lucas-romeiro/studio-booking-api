@@ -11,18 +11,26 @@ services:
       - studio-booking-api-modules:/src/node_modules
     environment:
       - PORT=${PORT}
+      - NODE_ENV=${NODE_ENV}
       - DB_TYPE=${DB_TYPE}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
+      - DB_HOST=studio-booking-api-database
+      - DB_PORT=5432
       - DB_USER=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_DATABASE=${DB_DATABASE}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+      - REFRESH_TOKEN_EXPIRES_IN_DAYS=${REFRESH_TOKEN_EXPIRES_IN_DAYS}
+      - REDIS_HOST=studio-booking-api-redis
+      - REDIS_PORT=6379
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
     networks:
       - studio-booking-api-network
-    command: npm run start
+    command: npm run start:dev
 
   db:
     image: postgres:alpine
@@ -36,7 +44,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_DATABASE}
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres -d tasks']
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USER} -d ${DB_DATABASE}']
       interval: 5s
       timeout: 3s
       retries: 5
@@ -45,7 +53,8 @@ services:
       - studio-booking-api-network
 
   redis:
-    image: redis
+    image: redis:alpine
+    container_name: studio-booking-api-redis
     ports:
       - '${REDIS_PORT}:6379'
     volumes:
