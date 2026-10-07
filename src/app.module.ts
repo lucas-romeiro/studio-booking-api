@@ -1,7 +1,12 @@
 import { Module } from '@nestjs/common';
 import { AppConfigModule } from './infrastructure/config';
 import { DatabaseModule } from './infrastructure/database';
-import { AuthModule, RoomModule, UserModule } from './interface/modules';
+import {
+  AuthModule,
+  EquipmentModule,
+  RoomModule,
+  UserModule,
+} from './interface/modules';
 import { QueueModule } from './infrastructure/queue';
 
 @Module({
@@ -12,6 +17,7 @@ import { QueueModule } from './infrastructure/queue';
     AuthModule,
     QueueModule,
     RoomModule,
+    EquipmentModule,
   ],
 })
 export class AppModule {}
