@@ -24,7 +24,7 @@ export class RoomTypeOrmRepository implements IRoomRepository {
     return orm ? RoomOrmMapper.toDomain(orm) : null;
   }
 
-  async findAll(filter?: SearchRoomsFilter): Promise<Room[]> {
+  async findAll(filter?: SearchRoomsFilter): Promise<[Room[], number]> {
     const where: FindOptionsWhere<RoomOrmEntity> = {};
 
     if (filter?.type) {
@@ -35,15 +35,22 @@ export class RoomTypeOrmRepository implements IRoomRepository {
       where.pricePerHour = LessThanOrEqual(filter.maxPricePerHour);
     }
 
-    const orms = await this.repo.find({
+    const [orms, total] = await this.repo.findAndCount({
       where,
+      order: {
+        [filter?.orderBy ?? 'createdAt']: filter?.order ?? 'DESC',
+      },
+      skip: filter?.skip ?? 0,
+      take: filter?.limit ?? 10,
     });
 
-    return orms
+    const rooms = orms
       .filter(
         (orm) => !filter?.minCapacity || orm.capacity >= filter.minCapacity,
       )
       .map((room) => RoomOrmMapper.toDomain(room));
+
+    return [rooms, total];
   }
 
   async exists(id: string): Promise<boolean> {
