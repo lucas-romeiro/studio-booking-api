@@ -1,5 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { Email, IUserRepository, User, USER_REPOSITORY } from '@/domain/user';
+import {
+  Email,
+  IUserRepository,
+  User,
+  USER_REPOSITORY,
+  UserRole,
+} from '@/domain/user';
 import {
   EmailAlreadyInUseError,
   IRefreshTokenRepository,
@@ -12,6 +18,7 @@ import { SignupDto } from '../dtos/signup.dto';
 import { AuthResponseDto } from '../dtos/auth-response.dto';
 
 import * as bcrypt from 'bcrypt';
+import { DomainError } from '@/domain/shared';
 
 @Injectable()
 export class SignupUseCase {
@@ -27,6 +34,12 @@ export class SignupUseCase {
 
     if (alreadyExists) {
       throw new EmailAlreadyInUseError(dto.email);
+    }
+
+    const ALLOWED_SIGNUP_ROLES = [UserRole.MUSICIAN, UserRole.RENTER];
+
+    if (dto.role && !ALLOWED_SIGNUP_ROLES.includes(dto.role)) {
+      throw new DomainError('Invalid function for registration');
     }
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
