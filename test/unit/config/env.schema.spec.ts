@@ -1,47 +1,29 @@
 import { envSchema } from '@/infrastructure/config/env.schema';
+import { EnvConfig } from '@/infrastructure/config/env.interface';
 
-interface ValidatedEnv {
-  NODE_ENV: 'development' | 'production' | 'test';
-  PORT: number;
-  DB_TYPE: string;
-  DB_HOST: string;
-  DB_PORT: number;
-  DB_USER: string;
-  DB_PASSWORD: string;
-  DB_DATABASE: string;
-  JWT_SECRET?: string;
-  JWT_EXPIRES_IN: string;
-  REFRESH_TOKEN_EXPIRES_IN_DAYS: number;
-  REDIS_HOST: string;
-  REDIS_PORT: number;
-}
+const createValidRawEnv = (): Record<string, string> => ({
+  NODE_ENV: 'production',
+  PORT: '3000',
+  DB_USER: 'postgres',
+  DB_PASSWORD: 'postgres',
+  DB_DATABASE: 'studio-booking-api',
+  JWT_SECRET: 'f5jR4LVd25cZaIQ6q0A899T9j5l0K2cSgefqUE0tk6Z',
+});
 
-describe('envSchema Validation', () => {
-  const createValidRawEnv = (): Record<string, string> => ({
-    NODE_ENV: 'production',
-    PORT: '3000',
-    DB_USER: 'root',
-    DB_PASSWORD: 'secret_password',
-    DB_DATABASE: 'my_app_db',
-    JWT_SECRET: 'super_secret_key',
-  });
+describe('envSchema', () => {
+  describe('success flow', () => {
+    it('valida env correto e aplica defaults', () => {
+      const { error, value } = envSchema.validate(createValidRawEnv(), {
+        allowUnknown: true,
+      }) as { error: unknown; value: EnvConfig };
 
-  describe('Success Flow', () => {
-    it('should validate a correct env object and apply all defaults and type coercions', () => {
-      const rawEnv = createValidRawEnv();
-
-      const { error, value } = envSchema.validate(rawEnv) as {
-        error: undefined;
-        value: ValidatedEnv;
-      };
+      const env = value;
 
       expect(error).toBeUndefined();
-
-      expect(value.PORT).toBe(3000);
-      expect(value.DB_PORT).toBe(5432);
-
-      expect(value).toEqual(
-        expect.objectContaining({
+      expect(env.PORT).toBe(3000);
+      expect(env.DB_PORT).toBe(5432);
+      expect(env).toEqual(
+        expect.objectContaining<Partial<EnvConfig>>({
           NODE_ENV: 'production',
           DB_TYPE: 'postgres',
           DB_HOST: 'localhost',
@@ -52,34 +34,69 @@ describe('envSchema Validation', () => {
         }),
       );
     });
-  });
 
-  describe('Failure Flow', () => {
-    it('should fail if NODE_ENV has an invalid option', () => {
-      const env = { ...createValidRawEnv(), NODE_ENV: 'staging' };
-
-      const { error } = envSchema.validate(env);
-
-      const hasNodeEnvError = error?.details.some((detail) =>
-        detail.path.includes('NODE_ENV'),
-      );
-      expect(hasNodeEnvError).toBe(true);
+    it('aceita NODE_ENV como development', () => {
+      const env = { ...createValidRawEnv(), NODE_ENV: 'development' };
+      const { error } = envSchema.validate(env, { allowUnknown: true });
+      expect(error).toBeUndefined();
     });
 
-    it.each([['DB_USER'], ['DB_PASSWORD'], ['DB_DATABASE']])(
-      'should fail if required field %s is missing',
+    it('aceita NODE_ENV como test', () => {
+      const env = { ...createValidRawEnv(), NODE_ENV: 'test' };
+      const { error } = envSchema.validate(env, { allowUnknown: true });
+      expect(error).toBeUndefined();
+    });
+
+    it('aplica default de NODE_ENV quando ausente', () => {
+      const rest = createValidRawEnv();
+      delete rest.NODE_ENV;
+
+      const { value } = envSchema.validate(rest, {
+        allowUnknown: true,
+      }) as { value: EnvConfig };
+
+      expect(value.NODE_ENV).toBe('development');
+    });
+  });
+
+  describe('failure flow', () => {
+    it('falha se NODE_ENV for inválido', () => {
+      const env = { ...createValidRawEnv(), NODE_ENV: 'staging' };
+      const { error } = envSchema.validate(env, { allowUnknown: true });
+      expect(error?.details.some((d) => d.path.includes('NODE_ENV'))).toBe(
+        true,
+      );
+    });
+
+    it.each([['DB_USER'], ['DB_PASSWORD'], ['DB_DATABASE'], ['JWT_SECRET']])(
+      'falha se campo obrigatório %s estiver ausente',
       (field) => {
         const env: Partial<Record<string, string>> = createValidRawEnv();
-
         delete env[field];
 
-        const { error } = envSchema.validate(env, { abortEarly: false });
+        const { error } = envSchema.validate(env, {
+          abortEarly: false,
+          allowUnknown: true,
+        });
 
-        const hasFieldError = error?.details.some((detail) =>
-          detail.path.includes(field),
-        );
-        expect(hasFieldError).toBe(true);
+        expect(error?.details.some((d) => d.path.includes(field))).toBe(true);
       },
     );
+
+    it('falha se JWT_SECRET tiver menos de 32 caracteres', () => {
+      const env = { ...createValidRawEnv(), JWT_SECRET: 'curto' };
+      const { error } = envSchema.validate(env, { allowUnknown: true });
+      expect(error?.details.some((d) => d.path.includes('JWT_SECRET'))).toBe(
+        true,
+      );
+    });
+
+    it('mostra todos os erros quando abortEarly é false', () => {
+      const { error } = envSchema.validate(
+        { NODE_ENV: 'invalid' },
+        { abortEarly: false, allowUnknown: true },
+      );
+      expect(error?.details.length).toBeGreaterThan(1);
+    });
   });
 });
