@@ -6,6 +6,8 @@ import {
   mockTokenPort,
 } from '../../__mocks__';
 import { EmailAlreadyInUseError } from '@/domain/auth';
+import { DomainError } from '@/domain/shared';
+import { UserRole } from '@/domain/user';
 import * as bcrypt from 'bcrypt';
 
 jest.mock('bcrypt');
@@ -64,6 +66,26 @@ describe('SignupUseCase', () => {
         }),
       );
     });
+
+    it('should allow registration with a valid permitted role (e.g., MUSICIAN)', async () => {
+      mockUserRepository.exists.mockResolvedValue(false);
+      mockUserRepository.save.mockResolvedValue(undefined);
+      mockRefreshTokenRepository.save.mockResolvedValue(undefined);
+      mockTokenPort.generateAccessToken.mockReturnValue('access_token');
+      mockTokenPort.generateRefreshToken.mockReturnValue('refresh_token');
+      mockTokenPort.refreshTokenExpiresAt.mockReturnValue(new Date());
+      mockedBcrypt.hash.mockImplementation(() => 'hashed_password');
+
+      const dtoWithRole = { ...dto, role: UserRole.MUSICIAN };
+      const result = await useCase.execute(dtoWithRole);
+
+      expect(mockUserRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          role: UserRole.MUSICIAN,
+        }),
+      );
+      expect(result.user.role).toBe(UserRole.MUSICIAN);
+    });
   });
 
   describe('Failure Flow', () => {
@@ -78,6 +100,21 @@ describe('SignupUseCase', () => {
       expect(mockTokenPort.generateAccessToken).not.toHaveBeenCalled();
       expect(mockTokenPort.generateRefreshToken).not.toHaveBeenCalled();
       expect(mockTokenPort.refreshTokenExpiresAt).not.toHaveBeenCalled();
+      expect(mockRefreshTokenRepository.save).not.toHaveBeenCalled();
+    });
+
+    it('should throw DomainError if an invalid role is provided', async () => {
+      mockUserRepository.exists.mockResolvedValue(false);
+
+      const invalidDto = { ...dto, role: 'ADMIN' as UserRole };
+
+      await expect(useCase.execute(invalidDto)).rejects.toThrow(DomainError);
+      await expect(useCase.execute(invalidDto)).rejects.toThrow(
+        'Invalid function for registration',
+      );
+
+      expect(mockedBcrypt.hash).not.toHaveBeenCalled();
+      expect(mockUserRepository.save).not.toHaveBeenCalled();
       expect(mockRefreshTokenRepository.save).not.toHaveBeenCalled();
     });
   });
