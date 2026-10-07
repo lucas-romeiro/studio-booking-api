@@ -21,7 +21,9 @@
     "test:all": "jest",
     "test:cov": "jest --coverage",
     "test:watch": "jest --watch --selectProjects unit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "seed": "ts-node -r tsconfig-paths/register src/infrastructure/database/seeds/seed.ts",
+    "seed:fresh": "npm run schema:drop && npm run schema:sync && npm run seed"
   },
   "dependencies": {
     "@nestjs/bullmq": "^11.0.4",
