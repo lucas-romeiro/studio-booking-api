@@ -11,25 +11,21 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiQuery,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   CreateRoomDto,
   CreateRoomUseCase,
   DeleteRoomUseCase,
   GetRoomUseCase,
   RoomResponseDto,
+  SearchRoomsDto,
   SearchRoomsUseCase,
   UpdateRoomDto,
   UpdateRoomUseCase,
 } from '@/application/room';
 import { Roles } from '../decorators';
 import { UserRole } from '@/domain/user';
-import { RoomType } from '@/domain/room';
+import { PaginationResponse } from '@/shared';
 
 @ApiTags('rooms')
 @ApiBearerAuth()
@@ -53,15 +49,10 @@ export class RoomController {
 
   @Get()
   @ApiOperation({ summary: 'Search for available rooms' })
-  @ApiQuery({ name: 'type', enum: RoomType, required: false })
-  @ApiQuery({ name: 'minCapacity', type: Number, required: false })
-  @ApiQuery({ name: 'maxPricePerHour', type: Number, required: false })
   async search(
-    @Query('type') type?: RoomType,
-    @Query('minCapacity') minCapacity?: number,
-    @Query('maxPricePerHour') maxPricePerHour?: number,
-  ): Promise<RoomResponseDto[]> {
-    return this.searchRooms.execute({ type, minCapacity, maxPricePerHour });
+    @Query() dto: SearchRoomsDto,
+  ): Promise<PaginationResponse<RoomResponseDto>> {
+    return this.searchRooms.execute(dto);
   }
 
   @Get(':id')
