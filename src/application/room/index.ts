@@ -7,3 +7,4 @@ export { SearchRoomsUseCase } from './use-cases/search-rooms.use-case';
 export { UpdateRoomDto } from './dtos/update-room.dto';
 export { UpdateRoomUseCase } from './use-cases/update-room.use-case';
 export { DeleteRoomUseCase } from './use-cases/delete-room.use-case';
+export { SearchRoomsDto } from './dtos/search-rooms.dto';
