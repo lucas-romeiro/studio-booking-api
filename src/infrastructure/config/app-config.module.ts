@@ -18,6 +18,7 @@ import { TypedConfigService } from './typed-config.service';
       validationSchema: envSchema,
       validationOptions: {
         abortEarly: false,
+        allowUnknown: true,
       },
     }),
   ],

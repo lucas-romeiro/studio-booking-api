@@ -19,7 +19,7 @@ export const databaseConfig = registerAs(
     port: parseInt(process.env.DB_PORT ?? '5432', 10),
     username: process.env.DB_USER ?? 'postgres',
     password: process.env.DB_PASSWORD ?? 'postgres',
-    database: process.env.DB_DATABASE ?? 'studio_booking',
+    database: process.env.DB_DATABASE ?? 'studio-booking-api',
     synchronize: process.env.NODE_ENV !== 'production',
     logging: process.env.NODE_ENV === 'development',
   }),
