@@ -3,3 +3,5 @@ export { ConfigType } from './config-types';
 export { envSchema } from './env.schema';
 export { typedConfigProvider } from './typed-config.provider';
 export { TypedConfigService } from './typed-config.service';
+export { EnvConfig } from './env.interface';
+export { validateEnv } from './validate-env';

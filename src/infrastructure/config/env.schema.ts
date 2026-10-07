@@ -1,6 +1,7 @@
 import * as Joi from 'joi';
+import { EnvConfig } from './env.interface';
 
-export const envSchema = Joi.object({
+export const envSchema: Joi.ObjectSchema<EnvConfig> = Joi.object<EnvConfig>({
   NODE_ENV: Joi.string()
     .valid('development', 'production', 'test')
     .default('development'),
@@ -13,7 +14,7 @@ export const envSchema = Joi.object({
   DB_PASSWORD: Joi.string().required(),
   DB_DATABASE: Joi.string().required(),
 
-  JWT_SECRET: Joi.string(),
+  JWT_SECRET: Joi.string().min(32).required(),
   JWT_EXPIRES_IN: Joi.string().default('15m'),
   REFRESH_TOKEN_EXPIRES_IN_DAYS: Joi.number().default(30),
 
