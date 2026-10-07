@@ -7,3 +7,6 @@ export { userRepositoryProvider } from './repositories/providers/user-repository
 export { RoomOrmEntity } from './entities/room.orm-entity';
 export { RoomTypeOrmRepository } from './repositories/room.typeorm-repository';
 export { roomRepositoryProvider } from './repositories/providers/room-repository.provider';
+export { EquipmentOrmEntity } from './entities/equipment.orm-entity';
+export { EquipmentTypeOrmRepository } from './repositories/equipment.typeorm-repository';
+export { equipmentRepositoryProvider } from './repositories/providers/equipment-repository.provider';
