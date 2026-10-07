@@ -27,7 +27,11 @@ export class RolesGuard implements CanActivate {
       .switchToHttp()
       .getRequest<{ user: TokenPayload }>();
 
-    if (!requiredRoles.includes(user.role as UserRole)) {
+    const hasRole =
+      requiredRoles.includes(user.role as UserRole) ||
+      (user.role as UserRole) === UserRole.ADMIN;
+
+    if (!hasRole) {
       throw new ForbiddenException('Access denied');
     }
 
