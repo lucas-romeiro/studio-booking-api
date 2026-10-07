@@ -19,7 +19,7 @@ export class InMemoryRoomRepository implements IRoomRepository {
     return Promise.resolve(room);
   }
 
-  async findAll(filter?: SearchRoomsFilter): Promise<Room[]> {
+  async findAll(filter?: SearchRoomsFilter): Promise<[Room[], number]> {
     const rooms = this.rooms.filter((r) => {
       if (filter?.type && r.type !== filter.type) {
         return false;
@@ -39,7 +39,12 @@ export class InMemoryRoomRepository implements IRoomRepository {
       return true;
     });
 
-    return Promise.resolve(rooms);
+    const total = rooms.length;
+    const skip = filter?.skip ?? 0;
+    const limit = filter?.limit ?? 10;
+    const result = rooms.slice(skip, skip + limit);
+
+    return Promise.resolve([result, total]);
   }
 
   async exists(id: string): Promise<boolean> {
@@ -49,7 +54,7 @@ export class InMemoryRoomRepository implements IRoomRepository {
 
   async delete(id: string): Promise<void> {
     const room = this.rooms.find((r) => r.id === id)!;
-    room.deactivate();
-    await this.save(room);
+    if (room) room.deactivate();
+    await Promise.resolve();
   }
 }
