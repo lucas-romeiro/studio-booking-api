@@ -18,3 +18,4 @@ export {
   SearchRoomBookingsFilter,
   IRoomBookingRepository,
 } from './repositories/room-booking.repository.interface';
+export { EquipmentRental } from './entities/equipment-rental.entity';
