@@ -80,7 +80,6 @@ describe('CreateRoomBookingUseCase', () => {
       mockRoomRepository.findById.mockResolvedValue(room);
 
       jest.spyOn(room, 'isAvailableFor').mockReturnValue(false);
-      console.log(room);
 
       await expect(useCase.execute(dto, currentUser)).rejects.toBeInstanceOf(
         RoomTypeNotAllowedError,
