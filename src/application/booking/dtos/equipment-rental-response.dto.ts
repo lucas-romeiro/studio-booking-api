@@ -15,10 +15,10 @@ export class EquipmentRentalResponseDto {
   quantity!: number;
 
   @ApiProperty()
-  startTime!: Date;
+  startDate!: Date;
 
   @ApiProperty()
-  endTime!: Date;
+  endDate!: Date;
 
   @ApiProperty()
   totalPrice!: number;
