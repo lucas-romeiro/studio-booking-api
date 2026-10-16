@@ -4,3 +4,6 @@ export { EquipmentRentalResponseDto } from './dtos/equipment-rental-response.dto
 export { RoomBookingResponseDto } from './dtos/room-booking-response.dto';
 export { SearchEquipmentRentalsDto } from './dtos/search-equipment-rentals.dto';
 export { SearchRoomBookingsDto } from './dtos/search-room-bookings.dto';
+export { EquipmentRentalMapper } from './mappers/equipment-rental.mapper';
+export { RoomBookingMapper } from './mappers/room-booking.mapper';
+export { CreateRoomBookingUseCase } from './use-cases/create-room-booking.use-case';
