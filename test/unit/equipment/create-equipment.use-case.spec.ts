@@ -2,9 +2,9 @@ import {
   CreateEquipmentDto,
   CreateEquipmentUseCase,
 } from '@/application/equipment';
-import { InMemoryEquipmentRepository } from '../../__spies__';
-import { EquipmentCategory } from '../../../src/domain/equipment';
-import { DomainError } from '../../../src/domain/shared';
+import { EquipmentCategory } from '@/domain/equipment';
+import { DomainError } from '@/domain/shared';
+import { InMemoryEquipmentRepository } from '../../__fakes__';
 
 describe('CreateEquipmentUseCase', () => {
   let useCase: CreateEquipmentUseCase;

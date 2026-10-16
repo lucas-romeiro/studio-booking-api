@@ -1,8 +1,8 @@
 import { CreateUserDto, CreateUserUseCase } from '@/application/user';
 import { UserAlreadyExistsError, UserRole } from '@/domain/user';
-import { InMemoryUserRepository } from '../../__spies__';
-import { UserFactory } from '../../__factories__';
 import * as bcrypt from 'bcrypt';
+import { UserFactory } from '../../__factories__';
+import { InMemoryUserRepository } from '../../__fakes__';
 
 jest.mock('bcrypt');
 const mockedBcrypt = jest.mocked(bcrypt);

@@ -1,6 +1,6 @@
 import { CreateRoomDto, CreateRoomUseCase } from '@/application/room';
 import { RoomType } from '@/domain/room';
-import { InMemoryRoomRepository } from '../../__spies__';
+import { InMemoryRoomRepository } from '../../__fakes__';
 
 describe('CreateRoomUseCase', () => {
   let useCase: CreateRoomUseCase;
