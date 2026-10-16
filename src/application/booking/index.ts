@@ -7,3 +7,4 @@ export { SearchRoomBookingsDto } from './dtos/search-room-bookings.dto';
 export { EquipmentRentalMapper } from './mappers/equipment-rental.mapper';
 export { RoomBookingMapper } from './mappers/room-booking.mapper';
 export { CreateRoomBookingUseCase } from './use-cases/create-room-booking.use-case';
+export { CancelRoomBookingUseCase } from './use-cases/cancel-room-booking.use-case';
