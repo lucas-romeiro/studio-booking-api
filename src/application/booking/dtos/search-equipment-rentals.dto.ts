@@ -4,6 +4,11 @@ import { IsDateString, IsEnum, IsOptional, IsUUID } from 'class-validator';
 import { RentalStatus } from '@/domain/booking';
 
 export class SearchEquipmentRentalsDto extends PaginationDto {
+  @ApiPropertyOptional({ format: 'uuid', description: 'Oly staff/admin' })
+  @IsOptional()
+  @IsUUID()
+  userId?: string;
+
   @ApiPropertyOptional({ format: 'uuid' })
   @IsOptional()
   @IsUUID()
