@@ -2,7 +2,7 @@ export { TimeSlot } from './value-objects/time-slot.vo';
 export { BookingStatus } from './value-objects/booking-status.vo';
 export { RentalStatus } from './value-objects/rental-status.vo';
 export { RoomBooking } from './entities/room-booking.entity';
-export { EquipmentNotAvailableErro } from './errors/equipment-not-available.error';
+export { EquipmentNotAvailableError } from './errors/equipment-not-available.error';
 export { EquipmentRentalNotFoundError } from './errors/equipment-rental-not-found.error';
 export { RoomBookingNotFoundError } from './errors/room-booking-not-found.error';
 export { RoomNotAvailableError } from './errors/room-not-available.error';
