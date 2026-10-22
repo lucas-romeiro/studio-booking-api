@@ -80,4 +80,23 @@ export class RoomBookingTypeOrmRepository implements IRoomBookingRepository {
   async exists(id: string): Promise<boolean> {
     return this.repo.existsBy({ id });
   }
+
+  async findByRoomAndDate(roomId: string, date: Date): Promise<RoomBooking[]> {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const orms = await this.repo.find({
+      where: {
+        roomId,
+        status: Not(BookingStatus.CANCELLED),
+        startTime: MoreThan(startOfDay),
+        endTime: LessThan(endOfDay),
+      },
+    });
+
+    return orms.map((o) => RoomBookingOrmMapper.toDomain(o));
+  }
 }
