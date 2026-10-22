@@ -35,7 +35,7 @@ export class CreateEquipmentRentalUseCase {
       throw new EquipmentNotFoundError(dto.equipmentId);
     }
 
-    if (equipment.availableStock > dto.quantity) {
+    if (equipment.availableStock < dto.quantity) {
       throw new EquipmentNotAvailableError(dto.equipmentId);
     }
 
