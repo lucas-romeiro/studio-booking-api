@@ -3,6 +3,7 @@ import { AppConfigModule } from './infrastructure/config';
 import { DatabaseModule } from './infrastructure/database';
 import {
   AuthModule,
+  BookingModule,
   EquipmentModule,
   RoomModule,
   UserModule,
@@ -18,6 +19,7 @@ import { QueueModule } from './infrastructure/queue';
     QueueModule,
     RoomModule,
     EquipmentModule,
+    BookingModule,
   ],
 })
 export class AppModule {}
