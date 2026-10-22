@@ -10,3 +10,9 @@ export { roomRepositoryProvider } from './repositories/providers/room-repository
 export { EquipmentOrmEntity } from './entities/equipment.orm-entity';
 export { EquipmentTypeOrmRepository } from './repositories/equipment.typeorm-repository';
 export { equipmentRepositoryProvider } from './repositories/providers/equipment-repository.provider';
+export { EquipmentRentalOrmEntity } from './entities/equipment-rental.orm-entity';
+export { RoomBookingOrmEntity } from './entities/room-booking.orm-entity';
+export { EquipmentRentalTypeOrmRepository } from './repositories/equipment-rental.typeorm-repository';
+export { RoomBookingTypeOrmRepository } from './repositories/room-booking.typeorm-repository';
+export { equipmentRentalRepositoryProvider } from './repositories/providers/equipment-rental-repository.provider';
+export { roomBookingRepositoryProvider } from './repositories/providers/room-booking-repository.provider';
