@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import {
   EquipmentRentalOrmEntity,
@@ -27,7 +27,7 @@ import {
 @Module({
   imports: [
     TypeOrmModule.forFeature([RoomBookingOrmEntity, EquipmentRentalOrmEntity]),
-    RoomModule,
+    forwardRef(() => RoomModule),
     EquipmentModule,
   ],
   controllers: [RoomBookingsController, EquimentRentalsController],
@@ -44,5 +44,6 @@ import {
     roomBookingRepositoryProvider,
     equipmentRentalRepositoryProvider,
   ],
+  exports: [roomBookingRepositoryProvider],
 })
 export class BookingModule {}
