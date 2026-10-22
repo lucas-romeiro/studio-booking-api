@@ -4,7 +4,9 @@ import { DataSource } from 'typeorm';
 import { envSchema } from '../config/env.schema';
 import {
   EquipmentOrmEntity,
+  EquipmentRentalOrmEntity,
   RefreshTokenOrmEntity,
+  RoomBookingOrmEntity,
   RoomOrmEntity,
   UserOrmEntity,
 } from './typeorm';
@@ -28,6 +30,8 @@ export const AppDataSource = new DataSource({
     RoomOrmEntity,
     EquipmentOrmEntity,
     RefreshTokenOrmEntity,
+    RoomBookingOrmEntity,
+    EquipmentRentalOrmEntity,
   ],
   migrations: ['src/infrastructure/database/migrations/*.ts'],
 });
