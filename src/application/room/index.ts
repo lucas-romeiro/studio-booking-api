@@ -8,3 +8,5 @@ export { UpdateRoomDto } from './dtos/update-room.dto';
 export { UpdateRoomUseCase } from './use-cases/update-room.use-case';
 export { DeleteRoomUseCase } from './use-cases/delete-room.use-case';
 export { SearchRoomsDto } from './dtos/search-rooms.dto';
+export { RoomAvailabilityResponseDto } from './dtos/room-availability-response.dto';
+export { GetRoomAvailabilityUseCase } from './use-cases/get-room-availability.use-case';
