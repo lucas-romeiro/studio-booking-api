@@ -11,12 +11,19 @@ import {
   Post,
   Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import {
   CreateRoomDto,
   CreateRoomUseCase,
   DeleteRoomUseCase,
+  GetRoomAvailabilityUseCase,
   GetRoomUseCase,
+  RoomAvailabilityResponseDto,
   RoomResponseDto,
   SearchRoomsDto,
   SearchRoomsUseCase,
@@ -37,6 +44,7 @@ export class RoomController {
     private readonly searchRooms: SearchRoomsUseCase,
     private readonly updateRoom: UpdateRoomUseCase,
     private readonly deleteRoom: DeleteRoomUseCase,
+    private readonly getRoomAvailability: GetRoomAvailabilityUseCase,
   ) {}
 
   @Post()
@@ -79,5 +87,15 @@ export class RoomController {
   @ApiOperation({ summary: 'Deactivate room (admin)' })
   async remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.deleteRoom.execute(id);
+  }
+
+  @Get(':id/availability')
+  @ApiOperation({ summary: 'Check room availability by date' })
+  @ApiQuery({ name: 'date', type: String, example: '2026-11-01' })
+  async availability(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Query('date') date: string,
+  ): Promise<RoomAvailabilityResponseDto> {
+    return this.getRoomAvailability.execute(id, date);
   }
 }
