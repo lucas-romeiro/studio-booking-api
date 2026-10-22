@@ -21,4 +21,5 @@ export interface IRoomBookingRepository {
     timeSlot: { startTime: Date; endTime: Date },
   ): Promise<RoomBooking[]>;
   exists(id: string): Promise<boolean>;
+  findByRoomAndDate(roomId: string, date: Date): Promise<RoomBooking[]>;
 }
