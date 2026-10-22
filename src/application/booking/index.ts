@@ -10,6 +10,8 @@ export { CreateRoomBookingUseCase } from './use-cases/create-room-booking.use-ca
 export { CancelRoomBookingUseCase } from './use-cases/cancel-room-booking.use-case';
 export { CancelEquipmentRentalUseCase } from './use-cases/cancel-equipment-rental.use-case';
 export { ConfirmeRoomBookingUseCase } from './use-cases/confirm-room-booking.use-case';
-export { CreateEquipmentRentalUseCase } from './use-cases/create-equipment-rental.use-case.dto';
+export { CreateEquipmentRentalUseCase } from './use-cases/create-equipment-rental.use-case';
 export { ListEquipmentRentalsUseCase } from './use-cases/list-equipment-rentals.use-case';
 export { ListRoomBookingsUseCase } from './use-cases/list-room-bookings.use-case';
+export { ConfirmEquipmentRentalUseCase } from './use-cases/confirm-equipment-rental.use-case';
+export { ReturnEquipmentRentalUseCase } from './use-cases/return-equipment-rental.use-case';
