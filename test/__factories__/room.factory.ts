@@ -5,6 +5,7 @@ interface RoomFactoryProps {
   name?: string;
   type?: RoomType;
   capacity?: number;
+  operatingHours?: OperatingHours;
   pricePerHour?: number;
   createdAt?: Date;
   deletedAt?: Date | null;
@@ -19,14 +20,16 @@ export class RoomFactory {
       type: override.type ?? RoomType.BOTH,
       capacity: override.capacity ?? 8,
       pricePerHour: new Money(override.pricePerHour ?? 50),
-      operatingHours: new OperatingHours({
-        monday: { open: '08:00', close: '22:00' },
-        tuesday: { open: '08:00', close: '22:00' },
-        wednesday: { open: '08:00', close: '22:00' },
-        thursday: { open: '08:00', close: '22:00' },
-        friday: { open: '08:00', close: '22:00' },
-        saturday: { open: '09:00', close: '18:00' },
-      }),
+      operatingHours:
+        override.operatingHours ??
+        new OperatingHours({
+          monday: { open: '08:00', close: '22:00' },
+          tuesday: { open: '08:00', close: '22:00' },
+          wednesday: { open: '08:00', close: '22:00' },
+          thursday: { open: '08:00', close: '22:00' },
+          friday: { open: '08:00', close: '22:00' },
+          saturday: { open: '09:00', close: '18:00' },
+        }),
       createdAt: override.createdAt ?? new Date(),
       deletedAt: override.deletedAt ?? null,
     });

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { GetRoomAvailabilityUseCase } from '@/application/room';
-import { RoomNotFoundError } from '@/domain/room';
+import { OperatingHours, RoomNotFoundError } from '@/domain/room';
 import { RoomFactory } from '../../__factories__/room.factory';
 import { mockRoomBookingRepository, mockRoomRepository } from '../../__mocks__';
 
@@ -33,11 +33,11 @@ describe('GetRoomAvailabilityUseCase', () => {
     });
 
     it('should return empty slots if room does not operate on that day', async () => {
-      const room = RoomFactory.make();
+      const room = RoomFactory.make({ operatingHours: new OperatingHours({}) });
       mockRoomRepository.findById.mockResolvedValue(room);
       mockRoomBookingRepository.findByRoomAndDate.mockResolvedValue([]);
 
-      const result = await useCase.execute(room.id, '2026-11-02');
+      const result = await useCase.execute(room.id, '2026-11-01');
 
       expect(result.availableSlots).toHaveLength(0);
       expect(result.bookedSlots).toHaveLength(0);
