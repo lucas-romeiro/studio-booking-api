@@ -2,12 +2,12 @@ import { EquipmentRental, RentalStatus } from '@/domain/booking';
 import { RentalPeriod } from '@/domain/equipment';
 import { Money } from '@/domain/room';
 import { DomainError } from '@/domain/shared';
+import { futureDateInDays } from '../../helpers';
 
 describe('EquipmentRental', () => {
   const createValidProps = () => {
-    const startDate = new Date();
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 2);
+    const startDate = futureDateInDays(1);
+    const endDate = futureDateInDays(2);
 
     return {
       userId: 'user-id',

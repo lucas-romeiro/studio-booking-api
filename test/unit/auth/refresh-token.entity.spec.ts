@@ -1,5 +1,5 @@
 import { RefreshToken } from '@/domain/auth';
-import { DomainError } from '../../../src/domain/shared';
+import { DomainError } from '@/domain/shared';
 
 describe('RefreshTokenEntity', () => {
   const createValidProps = () => ({

@@ -1,13 +1,12 @@
 import { BookingStatus, RoomBooking, TimeSlot } from '@/domain/booking';
 import { Money, RoomType } from '@/domain/room';
 import { DomainError } from '@/domain/shared';
+import { futureDate } from '../../helpers';
 
 describe('RoomBooking', () => {
   const createValidProps = () => {
-    const startDate = new Date();
-
-    const endDate = new Date();
-    endDate.setDate(endDate.getDate() + 2);
+    const startDate = futureDate(1);
+    const endDate = futureDate(4);
 
     return {
       userId: 'userId',

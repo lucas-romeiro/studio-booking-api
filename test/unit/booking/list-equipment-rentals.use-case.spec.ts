@@ -8,6 +8,7 @@ import { mockEquipmentRentalRepository } from '../../__mocks__';
 import { TokenPayload } from '@/domain/auth';
 import { UserRole } from '@/domain/user';
 import { EquipmentRentalFactory } from '../../__factories__';
+import { futureDateInDays } from '../../helpers';
 
 describe('ListEquipmentRentalsUseCase', () => {
   let useCase: ListEquipmentRentalsUseCase;
@@ -31,12 +32,6 @@ describe('ListEquipmentRentalsUseCase', () => {
     dto.limit = 10;
     Object.assign(dto, overrides);
     return dto;
-  };
-
-  const futureDate = (daysFromNow: number): string => {
-    const date = new Date();
-    date.setDate(date.getDate() + daysFromNow);
-    return date.toISOString();
   };
 
   describe('Authorization and Filtering Flow', () => {
@@ -84,8 +79,8 @@ describe('ListEquipmentRentalsUseCase', () => {
       const dto = createDefaultDto({
         page: 1,
         limit: 10,
-        startDate: futureDate(1),
-        endDate: futureDate(2),
+        startDate: futureDateInDays(1).toISOString(),
+        endDate: futureDateInDays(2).toISOString(),
       });
 
       const result = await useCase.execute(dto, currentUser);

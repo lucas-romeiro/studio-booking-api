@@ -1,5 +1,6 @@
 import { TimeSlot } from '@/domain/booking';
 import { DomainError } from '@/domain/shared';
+import { addDays, dayAfterTomorrow, tomorrow, yesterday } from '../../helpers';
 
 describe('TimeSlot Value Object', () => {
   beforeEach(() => {
@@ -10,22 +11,6 @@ describe('TimeSlot Value Object', () => {
   afterEach(() => {
     jest.useRealTimers();
   });
-
-  const addDays = (date: Date, days: number): Date => {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
-  };
-
-  const today = () => {
-    const d = new Date();
-    d.setHours(16, 0, 0, 0);
-    return d;
-  };
-
-  const tomorrow = () => addDays(new Date(), 1);
-  const dayAfterTomorrow = () => addDays(new Date(), 2);
-  const yesterday = () => addDays(new Date(), -1);
 
   describe('Creation & Validation', () => {
     it('should create a valid TimeSlot period successfully', () => {
@@ -38,7 +23,7 @@ describe('TimeSlot Value Object', () => {
     });
 
     it('should accept today as a valid start date if in the future', () => {
-      const start = today();
+      const start = tomorrow();
       const end = addDays(start, 1);
       const period = new TimeSlot(start, end);
 
@@ -54,7 +39,7 @@ describe('TimeSlot Value Object', () => {
 
     it('should throw DomainError if start time is greater than or equal to end time', () => {
       const start = tomorrow();
-      const end = today();
+      const end = tomorrow();
 
       expect(() => new TimeSlot(start, end)).toThrow(DomainError);
       expect(() => new TimeSlot(start, end)).toThrow(

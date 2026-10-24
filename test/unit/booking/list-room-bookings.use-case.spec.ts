@@ -8,6 +8,7 @@ import { TokenPayload } from '@/domain/auth';
 import { mockRoomBookingRepository } from '../../__mocks__';
 import { UserRole } from '@/domain/user';
 import { RoomBookingFactory } from '../../__factories__';
+import { futureDate } from '../../helpers';
 
 describe('ListRoomBookingsUseCase', () => {
   let useCase: ListRoomBookingsUseCase;
@@ -31,12 +32,6 @@ describe('ListRoomBookingsUseCase', () => {
     dto.limit = 10;
     Object.assign(dto, overrides);
     return dto;
-  };
-
-  const futureDate = (daysFromNow: number): string => {
-    const date = new Date();
-    date.setDate(date.getDate() + daysFromNow);
-    return date.toISOString();
   };
 
   describe('Authorization and Filtering Flow', () => {
@@ -85,8 +80,8 @@ describe('ListRoomBookingsUseCase', () => {
       const dto = createDefaultDto({
         page: 1,
         limit: 10,
-        startDate: futureDate(1),
-        endDate: futureDate(2),
+        startDate: futureDate(1).toISOString(),
+        endDate: futureDate(2).toISOString(),
       });
 
       const result = await useCase.execute(dto, currentUser);

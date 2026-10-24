@@ -14,6 +14,7 @@ import {
   EquipmentNotFoundError,
   EquipmentNotAvailableError,
 } from '@/domain/equipment';
+import { futureDateInDays } from '../../helpers';
 
 describe('CreateEquipmentRentalUseCase', () => {
   let useCase: CreateEquipmentRentalUseCase;
@@ -29,8 +30,8 @@ describe('CreateEquipmentRentalUseCase', () => {
     dto = {
       equipmentId: crypto.randomUUID(),
       quantity: 1,
-      startDate: futureDate(1),
-      endDate: futureDate(2),
+      startDate: futureDateInDays(1).toISOString(),
+      endDate: futureDateInDays(2).toISOString(),
     };
     currentUser = {
       sub: crypto.randomUUID(),
@@ -38,12 +39,6 @@ describe('CreateEquipmentRentalUseCase', () => {
       role: UserRole.ADMIN,
     };
   });
-
-  const futureDate = (daysFromNow: number): string => {
-    const date = new Date();
-    date.setDate(date.getDate() + daysFromNow);
-    return date.toISOString();
-  };
 
   describe('Creation Flow', () => {
     it('should create a rental with pending status successfully', async () => {

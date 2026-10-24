@@ -12,6 +12,7 @@ import {
   RoomNotAvailableError,
   RoomTypeNotAllowedError,
 } from '@/domain/booking';
+import { futureDate } from '../../helpers';
 
 describe('CreateRoomBookingUseCase', () => {
   let useCase: CreateRoomBookingUseCase;
@@ -26,8 +27,8 @@ describe('CreateRoomBookingUseCase', () => {
     );
     dto = {
       roomId: crypto.randomUUID(),
-      startTime: futureDate(1),
-      endTime: futureDate(3),
+      startTime: futureDate(1).toISOString(),
+      endTime: futureDate(3).toISOString(),
       type: RoomType.REHEARSAL,
     };
     currentUser = {
@@ -36,12 +37,6 @@ describe('CreateRoomBookingUseCase', () => {
       role: UserRole.MUSICIAN,
     };
   });
-
-  const futureDate = (hoursFromNow: number): string => {
-    const date = new Date();
-    date.setHours(date.getHours() + hoursFromNow);
-    return date.toISOString();
-  };
 
   describe('Creation Flow', () => {
     it('should create a reservation with pending status successfully', async () => {

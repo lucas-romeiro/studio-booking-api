@@ -1,21 +1,14 @@
 import { RentalPeriod } from '@/domain/equipment';
 import { DomainError } from '@/domain/shared';
+import {
+  addDays,
+  dayAfterTomorrow,
+  startOfDay,
+  tomorrow,
+  yesterday,
+} from '../../helpers';
 
 describe('Rental Period Value Objects', () => {
-  const addDays = (date: Date, days: number): Date => {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    result.setHours(0, 0, 0, 0);
-    return result;
-  };
-
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-
-  const tomorrow = () => addDays(today, 1);
-  const dayAfterTomorrow = () => addDays(today, 2);
-  const yesterday = () => addDays(today, -1);
-
   describe('Creation & Validation', () => {
     it('should create a valid rental period successfully', () => {
       const start = tomorrow();
@@ -27,6 +20,8 @@ describe('Rental Period Value Objects', () => {
     });
 
     it('should accept today as a valid start date', () => {
+      const today = startOfDay(new Date());
+
       const period = new RentalPeriod(today, tomorrow());
       expect(period.startDate).toEqual(today);
     });
@@ -66,6 +61,7 @@ describe('Rental Period Value Objects', () => {
     });
 
     it('should return false when periods are consecutive (no overlap)', () => {
+      const today = startOfDay(new Date());
       const a = new RentalPeriod(tomorrow(), dayAfterTomorrow());
       const b = new RentalPeriod(dayAfterTomorrow(), addDays(today, 3));
 
