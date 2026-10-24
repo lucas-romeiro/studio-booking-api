@@ -1,6 +1,6 @@
 import { DomainExceptionFilter } from '@/interface/http/filters';
 import { DomainError } from '@/domain/shared';
-import { ArgumentsHost, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, HttpStatus, Logger } from '@nestjs/common';
 import { UserAlreadyExistsError, UserNotFoundError } from '@/domain/user';
 import {
   RoomBookingNotFoundError,
@@ -25,6 +25,11 @@ const mockHost = {
 
 describe('DomainExceptionFilter', () => {
   let filter: DomainExceptionFilter;
+
+  beforeAll(() => {
+    jest.spyOn(Logger.prototype, 'warn').mockImplementation(() => {});
+    jest.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
